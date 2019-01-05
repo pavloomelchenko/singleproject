@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Spring Boot" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <module name="singleproject" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="com.mycompany.Application" />
+    <option name="VM_PARAMETERS" value="-Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=8000,suspend=n" />
+    <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
+    <option name="ALTERNATIVE_JRE_PATH" />
+    <method />
+  </configuration>
+</component>
