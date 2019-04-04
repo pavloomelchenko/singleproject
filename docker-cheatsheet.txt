@@ -1,0 +1,108 @@
+Source: https://docker-curriculum.com/
+
+Команда run с флагом -it подключает интерактивный tty в контейнер. Теперь можно запускать сколько угодно много команд внутри:
+docker run -it busybox sh
+
+
+удалить завершенный контейнер:
+docker rm 305297d7a235
+Удалить образ:
+docker rmi
+-d - detached mode, -P - open all ports, --name - nickname of container:
+docker run -d -P --name static-site prakhar1989/static-site
+Show ports:
+docker port static-site
+Output:
+443/tcp -> 0.0.0.0:32768
+80/tcp -> 0.0.0.0:32769       (means 80 container port will be matched to 32769 of the machine)
+
+Custom port (from cmd):
+docker run -p 8888:80 prakhar1989/static-site
+
+Build image (mention the dot at the end)
+docker build -t prakhar1989/catnip .
+
+Sample dockerfile   (-yqq is for answering 'y' everywhere during install):
+# start from base
+FROM ubuntu:14.04
+MAINTAINER Prakhar Srivastav <prakhar@prakhar.me>
+
+# install system-wide deps for python and node
+RUN apt-get -yqq update
+RUN apt-get -yqq install python-pip python-dev
+RUN apt-get -yqq install nodejs npm
+RUN ln -s /usr/bin/nodejs /usr/bin/node
+
+# copy our application code
+ADD flask-app /opt/flask-app
+WORKDIR /opt/flask-app
+
+# fetch app specific deps
+RUN npm install
+RUN npm run build
+RUN pip install -r requirements.txt
+
+# expose port
+EXPOSE 5000
+
+# start app
+CMD [ "python", "./app.py" ]
+
+
+Show networks:
+docker network ls
+(bridge                 - default networks for containers)
+
+
+Connect to container using bash:
+docker run -it --rm prakhar1989/foodtrucks-web bash
+
+Create network from cmd:
+docker network create foodtrucks
+
+Run with network:
+--net <networkName>
+
+Tool for multi container dockr apps:
+docker-compose
+
+Sample docker-compose.yml file:
+version: "3"
+services:
+  es:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.3.2
+    container_name: es
+    environment:
+      - discovery.type=single-node
+    ports:
+      - 9200:9200
+    volumes:
+      - esdata1:/usr/share/elasticsearch/data
+  web:
+    image: pomelchenko/foodtrucks-web
+    command: python app.py
+    depends_on:
+      - es
+    ports:
+      - 5000:5000
+    volumes:
+      - ./flask-app:/opt/flask-app               #comment me out from local !
+volumes:
+    esdata1:
+      driver: local
+
+Docker-compose commands:
+docker-compose up -d
+docker-compose ps
+docker-compose stop
+
+To setup claster in EC2:
+Download aws-cli
+ecs-cli (docker-ec2 publishing tool)
+Generate keys to your aws (place in <USER>/.aws/)
+Publish to your Docker hub
+Create yml file and launch ecs with your config to your cluster
+
+
+
+
